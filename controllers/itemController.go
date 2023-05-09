@@ -186,5 +186,5 @@ func (ic *ItemController) CommentItem(ctx *gin.Context) {
 		ID:      newItemComment.ID,
 		Comment: newItemComment.Comment,
 	}
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "item_rating": NewItemCommentResponse})
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "item_comment": NewItemCommentResponse})
 }
