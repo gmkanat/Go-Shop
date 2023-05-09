@@ -42,3 +42,12 @@ type ItemComment struct {
 	User    User   `gorm:"foreignKey:UserID" json:"user"`
 	Item    Item   `gorm:"foreignKey:ItemID" json:"item"`
 }
+
+type ItemCommentChange struct {
+	Comment string `gorm:"not null" json:"comment"`
+}
+
+type ItemCommentResponse struct {
+	ID      uint   `json:"id"`
+	Comment string `json:"comment"`
+}

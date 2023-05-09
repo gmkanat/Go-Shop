@@ -22,4 +22,5 @@ func (ic *ItemRouteController) ItemRoute(rg *gin.RouterGroup) {
 	router.PUT("/:id", ic.itemController.UpdateItem)
 	router.DELETE("/:id", ic.itemController.DeleteItem)
 	router.POST("/rating/:id", middleware.DeserializeUser(), ic.itemController.GiveRatingToItem)
+	router.POST("/comment/:id", middleware.DeserializeUser(), ic.itemController.CommentItem)
 }
