@@ -156,3 +156,35 @@ func (ic *ItemController) GiveRatingToItem(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "item_rating": NewItemRatingResponse})
 }
+
+func (ic *ItemController) CommentItem(ctx *gin.Context) {
+	itemID := ctx.Param("id")
+	var item models.Item
+	ic.DB.First(&item, itemID)
+	if item.ID == 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "item not found"})
+		return
+	}
+	var payload *models.ItemCommentChange
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	newItemComment := models.ItemComment{
+		ItemID:  item.ID,
+		Comment: payload.Comment,
+		User:    currentUser,
+	}
+	result := ic.DB.Create(&newItemComment)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": result.Error.Error()})
+		return
+	}
+	NewItemCommentResponse := models.ItemCommentResponse{
+		ID:      newItemComment.ID,
+		Comment: newItemComment.Comment,
+	}
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "item_comment": NewItemCommentResponse})
+}

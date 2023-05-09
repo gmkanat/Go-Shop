@@ -18,8 +18,9 @@ func (ic *ItemRouteController) ItemRoute(rg *gin.RouterGroup) {
 	router := rg.Group("items")
 	router.GET("", ic.itemController.GetItems)
 	router.GET("/:id", ic.itemController.GetItem)
-	router.POST("", middleware.DeserializeUser(), ic.itemController.CreateItem)
+	router.POST("", middleware.DeserializeUser(), middleware.CheckUserRole(), ic.itemController.CreateItem)
 	router.PUT("/:id", ic.itemController.UpdateItem)
 	router.DELETE("/:id", ic.itemController.DeleteItem)
 	router.POST("/rating/:id", middleware.DeserializeUser(), ic.itemController.GiveRatingToItem)
+	router.POST("/comment/:id", middleware.DeserializeUser(), ic.itemController.CommentItem)
 }
