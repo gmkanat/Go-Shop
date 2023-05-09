@@ -10,6 +10,8 @@ type User struct {
 	Password  string    `gorm:"not null"`
 	CreatedAt time.Time `gorm:"not null"`
 	UpdatedAt time.Time `gorm:"not null"`
+	RoleId    uint      `gorm:"not null" json:"role_id"`
+	Role      UserRole  `gorm:"foreignKey:RoleId" json:"role"`
 }
 
 type SignUpInput struct {
@@ -30,4 +32,9 @@ type UserResponse struct {
 	Email     string    `json:"email,omitempty"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type UserRole struct {
+	ID   uint   `gorm:"primaryKey"`
+	Name string `gorm:"not null" json:"role"`
 }
