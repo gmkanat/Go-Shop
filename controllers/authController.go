@@ -53,6 +53,7 @@ func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 		Password:  hashedPassword,
 		CreatedAt: now,
 		UpdatedAt: now,
+		RoleId:    payload.RoleId,
 	}
 
 	result := ac.DB.Create(&newUser)

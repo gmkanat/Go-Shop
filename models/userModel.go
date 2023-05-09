@@ -19,6 +19,7 @@ type SignUpInput struct {
 	Email           string `json:"email" binding:"required"`
 	Password        string `json:"password" binding:"required,min=8"`
 	PasswordConfirm string `json:"password_confirm" binding:"required"`
+	RoleId          uint   `json:"role_id" binding:"required"`
 }
 
 type SignInInput struct {
