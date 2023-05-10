@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	config, err := initializers.LoadConfig(".")
+	config, err := initializers.LoadConfig("/Users/User/go/src/github.com/gmkanat/Go-Shop")
 	if err != nil {
 		log.Fatal("? Could not load environment variables", err)
 	}
@@ -26,6 +26,7 @@ func main() {
 	//if initializers.DB.Migrator().HasTable(&models.ItemRating{}) {
 	//	initializers.DB.Migrator().DropTable(&models.User{})
 	//}
-	initializers.DB.AutoMigrate(&models.User{}, models.UserRole{}, &models.Item{}, &models.ItemRating{}, &models.ItemComment{})
+	initializers.DB.AutoMigrate(&models.User{}, models.UserRole{}, &models.Item{},
+		&models.ItemRating{}, &models.ItemComment{}, models.Order{})
 	fmt.Println("? Migration complete")
 }

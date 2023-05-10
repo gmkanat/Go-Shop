@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gmkanat/Go-Shop/controllers"
 	"github.com/gmkanat/Go-Shop/initializers"
+	"github.com/gmkanat/Go-Shop/middleware"
 	"github.com/gmkanat/Go-Shop/routes"
 	"log"
 	"net/http"
@@ -52,7 +53,7 @@ func main() {
 		message := "Welcome to Golang with Gorm and Postgres"
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": message})
 	})
-
+	router.POST("order/:id/status", middleware.DeserializeUser(), middleware.CheckUserRole(ItemController.DB), ItemController.OrderStatus)
 	AuthRouteController.AuthRoute(router)
 	UserRouteController.UserRoute(router)
 	ItemRouteController.ItemRoute(router)

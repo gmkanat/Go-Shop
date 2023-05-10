@@ -188,3 +188,57 @@ func (ic *ItemController) CommentItem(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "item_comment": NewItemCommentResponse})
 }
+
+func (ic *ItemController) PurchaseItem(ctx *gin.Context) {
+	itemID := ctx.Param("id")
+	var item models.Item
+	ic.DB.First(&item, itemID)
+	if item.ID == 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "item not found"})
+		return
+	}
+	currentUser := ctx.MustGet("currentUser").(models.User)
+
+	newOrder := models.Order{
+		ItemID: item.ID,
+		UserID: currentUser.ID,
+	}
+	result := ic.DB.Create(&newOrder)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": result.Error.Error()})
+		return
+	}
+	NewOrderResponce := models.OrderResponse{
+		ID:     newOrder.ID,
+		Status: newOrder.Status,
+	}
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "order": NewOrderResponce})
+}
+
+func (ic *ItemController) OrderStatus(ctx *gin.Context) {
+	orderID := ctx.Param("id")
+	var order models.Order
+	ic.DB.First(&order, orderID)
+	if order.ID == 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "order not found"})
+		return
+	}
+
+	var payload *models.OrderChange
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+	order.Status = payload.Status
+
+	result := ic.DB.Save(order)
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": result.Error.Error()})
+		return
+	}
+	NewOrderResponce := models.OrderResponse{
+		ID:     order.ID,
+		Status: order.Status,
+	}
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "order": NewOrderResponce})
+}
