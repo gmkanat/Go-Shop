@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	config, err := initializers.LoadConfig("/Users/User/go/src/github.com/gmkanat/Go-Shop")
+	config, err := initializers.LoadConfig(".")
 	if err != nil {
 		log.Fatal("? Could not load environment variables", err)
 	}
