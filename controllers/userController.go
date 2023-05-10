@@ -33,13 +33,7 @@ func (uc *UserController) GetMe(ctx *gin.Context) {
 }
 
 func (uc *UserController) CancelOrder(ctx *gin.Context) {
-	orderID := ctx.Param("order_id")
-	var order models.Order
-	uc.DB.First(&order, orderID)
-	if order.ID == 0 {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": "order not found"})
-		return
-	}
+	order := ctx.MustGet("currentOrder").(models.Order)
 
 	order.Status = "canceled"
 

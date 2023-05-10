@@ -15,8 +15,6 @@ func NewRouteUserController(userController controllers.UserController) UserRoute
 }
 
 func (uc *UserRouteController) UserRoute(rg *gin.RouterGroup) {
-
 	router := rg.Group("users")
 	router.GET("/me", middleware.DeserializeUser(), uc.userController.GetMe)
-	router.POST("/:user_id/orders/:order_id/cancel", middleware.DeserializeUser(), uc.userController.CancelOrder)
 }

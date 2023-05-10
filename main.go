@@ -53,7 +53,8 @@ func main() {
 		message := "Welcome to Golang with Gorm and Postgres"
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": message})
 	})
-	router.POST("order/:id/status", middleware.DeserializeUser(), middleware.CheckUserRole(ItemController.DB), ItemController.OrderStatus)
+	router.POST("orders/:id/status", middleware.DeserializeUser(), middleware.CheckUserRole(ItemController.DB), ItemController.OrderStatus)
+	router.POST("orders/:id/cancel", middleware.DeserializeUser(), middleware.CheckUserOrder(UserController.DB), UserController.CancelOrder)
 	AuthRouteController.AuthRoute(router)
 	UserRouteController.UserRoute(router)
 	ItemRouteController.ItemRoute(router)
