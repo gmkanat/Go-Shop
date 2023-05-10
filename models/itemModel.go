@@ -1,9 +1,11 @@
 package models
 
 type Item struct {
-	ID    uint    `gorm:"primaryKey" json:"id"`
-	Name  string  `gorm:"not null" json:"name"`
-	Price float64 `gorm:"not null" json:"price"`
+	ID       uint    `gorm:"primaryKey" json:"id"`
+	Name     string  `gorm:"not null" json:"name"`
+	Price    float64 `gorm:"not null" json:"price"`
+	SellerID uint    `gorm:"not null" json:"seller_id"`
+	Seller   User    `json:"seller" gorm:"foreignKey:SellerID"`
 }
 
 type ItemList struct {
@@ -50,4 +52,22 @@ type ItemCommentChange struct {
 type ItemCommentResponse struct {
 	ID      uint   `json:"id"`
 	Comment string `json:"comment"`
+}
+
+type Order struct {
+	ID      uint   `gorm:"primaryKey" json:"id"`
+	UserID  uint   `gorm:"not null" json:"user_id"`
+	ItemID  uint   `gorm:"not null" json:"item_id"`
+	Comment string `gorm:"not null" json:"comment"`
+	User    User   `gorm:"foreignKey:UserID" json:"user"`
+	Status  string `gorm:"default:'pending';noy null" json:"status"`
+}
+
+type OrderResponse struct {
+	ID     uint   `json:"id"`
+	Status string `json:"status"`
+}
+
+type OrderChange struct {
+	Status string `json:"status"`
 }

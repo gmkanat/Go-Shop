@@ -26,6 +26,7 @@ func main() {
 	//if initializers.DB.Migrator().HasTable(&models.ItemRating{}) {
 	//	initializers.DB.Migrator().DropTable(&models.User{})
 	//}
-	initializers.DB.AutoMigrate(&models.User{}, models.UserRole{}, &models.Item{}, &models.ItemRating{}, &models.ItemComment{})
+	initializers.DB.AutoMigrate(&models.User{}, models.UserRole{}, &models.Item{},
+		&models.ItemRating{}, &models.ItemComment{}, models.Order{})
 	fmt.Println("? Migration complete")
 }
