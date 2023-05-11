@@ -4,13 +4,21 @@ type Item struct {
 	ID       uint    `gorm:"primaryKey" json:"id"`
 	Name     string  `gorm:"not null" json:"name"`
 	Price    float64 `gorm:"not null" json:"price"`
-	SellerID uint    `gorm:"not null" json:"seller_id"`
+	SellerID uint    `gorm:"default:null" json:"seller_id"`
 	Seller   User    `json:"seller" gorm:"foreignKey:SellerID"`
 }
 
 type ItemList struct {
-	Item
-	AvgRating float64 `json:"avg_rating"`
+	ID         uint    `json:"id"`
+	Name       string  `json:"name"`
+	Price      float64 `json:"price"`
+	SellerName string  `json:"seller_name"`
+	AvgRating  float64 `json:"avg_rating"`
+}
+type ItemDetail struct {
+	ItemList
+	//Comments string `json:"comments"`
+	Comments []ItemCommentChange `json:"comments"`
 }
 
 type ItemChange struct {
@@ -46,7 +54,7 @@ type ItemComment struct {
 }
 
 type ItemCommentChange struct {
-	Comment string `gorm:"not null" json:"comment"`
+	Comment string `json:"comment"`
 }
 
 type ItemCommentResponse struct {

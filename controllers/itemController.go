@@ -21,9 +21,10 @@ func NewItemController(DB *gorm.DB) ItemController {
 func (ic *ItemController) GetItems(ctx *gin.Context) {
 	var items []models.ItemList
 	query := ic.DB.Table("items").
-		Select("items.id, items.name, items.price, AVG(item_ratings.rating) as avg_rating").
+		Select("items.id, items.name, items.price, AVG(item_ratings.rating) as avg_rating, users.name as seller_name").
 		Joins("LEFT JOIN item_ratings ON items.id = item_ratings.item_id").
-		Group("items.id").
+		Joins("INNER JOIN users ON items.seller_id = users.id").
+		Group("items.id, users.name").
 		Order("items.id")
 
 	ratingGTEFilter, err := strconv.Atoi(ctx.Query("rating_gte"))
@@ -53,9 +54,27 @@ func (ic *ItemController) GetItems(ctx *gin.Context) {
 
 // GetItem [...] Get item by id
 func (ic *ItemController) GetItem(ctx *gin.Context) {
-	var item models.Item
+	var item models.ItemDetail
 	itemID := ctx.Param("id")
-	ic.DB.First(&item, itemID)
+	ic.DB.Raw(`
+		  SELECT 
+			items.id, 
+			items.name, 
+			items.price, 
+			AVG(item_ratings.rating) as avg_rating, 
+			users.name as seller_name,
+			json_agg(item_comments.comment) as comments
+		  FROM items
+		  LEFT JOIN item_ratings ON items.id = item_ratings.item_id
+		  INNER JOIN users ON items.seller_id = users.id
+		  LEFT JOIN item_comments ON items.id = item_comments.item_id
+		  WHERE items.id = ?
+		  GROUP BY items.id, users.name
+		`, itemID).Scan(&item)
+	ic.DB.Table("item_comments").
+		Select("item_comments.comment").
+		Where("item_comments.item_id = ?", itemID).
+		Order("item_comments.ID DESC").Scan(&item.Comments)
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "item": item})
 }
 
@@ -67,15 +86,21 @@ func (ic *ItemController) CreateItem(ctx *gin.Context) {
 		return
 	}
 	newItem := models.Item{
-		Name:  payload.Name,
-		Price: payload.Price,
+		Name:     payload.Name,
+		Price:    payload.Price,
+		SellerID: ctx.MustGet("currentUser").(models.User).ID,
 	}
+
 	result := ic.DB.Create(&newItem)
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": result.Error.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "item": newItem})
+	newItemResponse := models.ItemChange{
+		Name:  payload.Name,
+		Price: payload.Price,
+	}
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "item": newItemResponse})
 }
 
 // UpdateItem [...] Update item
