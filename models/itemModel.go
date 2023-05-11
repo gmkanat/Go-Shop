@@ -18,9 +18,12 @@ type ItemList struct {
 type ItemDetail struct {
 	ItemList
 	//Comments string `json:"comments"`
-	Comments []ItemCommentChange `json:"comments"`
+	Comments []ItemDetailComment `json:"comments"`
 }
-
+type ItemDetailComment struct {
+	Comment string `json:"comment"`
+	Email   string `json:"email"`
+}
 type ItemChange struct {
 	Name  string  `gorm:"not null" json:"name"`
 	Price float64 `gorm:"not null" json:"price"`
