@@ -72,9 +72,11 @@ func (ic *ItemController) GetItem(ctx *gin.Context) {
 		  GROUP BY items.id, users.name
 		`, itemID).Scan(&item)
 	ic.DB.Table("item_comments").
-		Select("item_comments.comment").
+		Select("item_comments.comment, users.email as email").
+		Joins("INNER JOIN users ON item_comments.user_id = users.id").
 		Where("item_comments.item_id = ?", itemID).
 		Order("item_comments.ID DESC").Scan(&item.Comments)
+
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "item": item})
 }
 
