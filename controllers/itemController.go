@@ -126,7 +126,11 @@ func (ic *ItemController) UpdateItem(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": result.Error.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "item": item})
+	newItemResponse := models.ItemChange{
+		Name:  item.Name,
+		Price: item.Price,
+	}
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "item": newItemResponse})
 }
 
 // DeleteItem [...] Delete item
